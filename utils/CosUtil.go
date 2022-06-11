@@ -20,8 +20,8 @@ var (
 
 const (
 	bucktetUrl string = "https://dousheng-1307504639.cos.ap-beijing.myqcloud.com"
-	SecretID   string = "找jj要"
-	SecretKey  string = "找jj要"
+	SecretID   string = "hhhh"
+	SecretKey  string = "hhhh"
 )
 
 func init() {

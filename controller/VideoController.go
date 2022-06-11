@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -17,7 +18,8 @@ func Publish(c *gin.Context) {
 	//	return
 	//}
 
-	data, err := c.FormFile("data")
+	data, err := c.FormFile("data") //??
+
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{
 			StatusCode: 1,
@@ -25,6 +27,7 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
+
 	err = service.UploadVideo(c, data)
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{
@@ -55,7 +58,7 @@ func Publish(c *gin.Context) {
 func PublishList(c *gin.Context) {
 	idStr := c.Query("user_id")
 	if idStr == "" {
-		c.JSON(http.StatusOK, model.Response{
+		c.JSON(http.StatusOK, model.Response{ //状态码为什么ok
 			StatusCode: 1,
 			StatusMsg:  "some params is missing",
 		})
@@ -70,6 +73,7 @@ func PublishList(c *gin.Context) {
 		return
 	}
 	videos, err := service.GetVideosByUserId(userId)
+	fmt.Println("videos：", videos)
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{
 			StatusCode: 1,
@@ -86,7 +90,11 @@ func PublishList(c *gin.Context) {
 }
 
 func Feed(c *gin.Context) {
+	//判断token为空的话 点赞为0
 	paramTime := c.Query("latest_time")
+
+	token := c.Query("token")
+
 	var queryTime time.Time
 	if paramTime == "" {
 		queryTime = time.Now()
@@ -109,6 +117,15 @@ func Feed(c *gin.Context) {
 			NextTime:  time.Now().Unix(),
 		})
 	}
+
+	//判断token为空的话 点赞为0？？
+	if token == "" {
+		for i := 0; i < len(videos); i++ {
+			videos[i].FavoriteCount = 0
+			videos[i].IsFavorite = false
+		}
+	}
+
 	c.JSON(http.StatusOK, model.FeedResponse{
 		Response:  model.Response{StatusCode: 0},
 		VideoList: videos,

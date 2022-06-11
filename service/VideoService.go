@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -11,7 +12,9 @@ import (
 
 //后续优化相关逻辑
 func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
+	fmt.Println(data.Filename)
 	fileKey := utils.GenerateVideoKey(data.Filename)
+	fmt.Println("fileKey:" + fileKey)
 	open, err := data.Open()
 	if err != nil {
 		return err
@@ -28,6 +31,7 @@ func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(utils.GetVideoUrl(fileKey))
 	createdVideo := &model.Video{
 		AuthorID:      user.Id,
 		PlayUrl:       utils.GetVideoUrl(fileKey),

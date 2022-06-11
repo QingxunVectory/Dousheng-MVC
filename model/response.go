@@ -16,6 +16,11 @@ type UserResponse struct {
 	User User `json:"user"`
 }
 
+type CommentResponse struct {
+	Response
+	Comment Comment `json:"comment"`
+}
+
 type CommentListResponse struct {
 	Response
 	CommentList []Comment `json:"comment_list,omitempty"`
@@ -30,6 +35,11 @@ type FeedResponse struct {
 type VideoListResponse struct {
 	Response
 	VideoList []Video `json:"video_list"`
+}
+
+type FavoriteListResponse struct {
+	Response
+	FavoriteList []Favorite `json:"video_list"`
 }
 
 type UserListResponse struct {
