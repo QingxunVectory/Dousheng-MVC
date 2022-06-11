@@ -1,15 +1,19 @@
 package service
 
 import (
+	"errors"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository"
 	"github.com/RaymondCode/simple-demo/utils"
+	"github.com/bitly/go-simplejson"
 	"github.com/gin-gonic/gin"
 	"mime/multipart"
+	"net/url"
 	"time"
 )
 
 //后续优化相关逻辑
+//test branch
 func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 	fileKey := utils.GenerateVideoKey(data.Filename)
 	open, err := data.Open()
@@ -59,4 +63,42 @@ func GetVideos(queryTime time.Time) ([]model.Video, int64, error) {
 
 func GetVideosByUserId(id int64) ([]model.Video, error) {
 	return repository.GetVideosByUserId(id)
+}
+
+func UpdateVideoImgUrl(jsonStr []byte) error {
+
+	var j *simplejson.Json
+	unescape, err := url.QueryUnescape(string(jsonStr))
+	if err != nil {
+		return err
+	}
+	j, err = simplejson.NewJson([]byte(unescape))
+	if err != nil {
+		return err
+	}
+	workflowTaskEvent := j.Get("WorkflowTaskEvent")
+	name := workflowTaskEvent.Get("InputInfo").Get("CosInputInfo").Get("Object")
+	path := workflowTaskEvent.Get("MediaProcessResultSet").GetIndex(0).Get("SnapshotByTimeOffsetTask").Get("Output").Get("PicInfoSet").GetIndex(0).Get("Path")
+
+	if name == nil || path == nil {
+		return errors.New("name or path is nil")
+	}
+	nameStr, err := name.String()
+	if err != nil {
+		return err
+	}
+	pathStr, err := path.String()
+	if err != nil {
+		return err
+	}
+	if len(nameStr) == 0 || len(pathStr) == 0 {
+		return errors.New("name or path's len is 0")
+	}
+	imgPath := utils.GetVideoUrl(pathStr[1:])
+	nameStrs := nameStr[1:]
+	_, err = repository.UpdateVideosByUrl(nameStrs, imgPath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
