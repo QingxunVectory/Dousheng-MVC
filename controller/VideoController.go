@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/gin-gonic/gin"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -114,4 +116,28 @@ func Feed(c *gin.Context) {
 		VideoList: videos,
 		NextTime:  times,
 	})
+}
+
+func Callbacks(c *gin.Context) {
+	bodyByte, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		return
+	}
+	fmt.Println(string(bodyByte))
+	err = service.UpdateVideoImgUrl(bodyByte)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.UserLoginResponse{
+			Response: model.Response{
+				StatusCode: -1,
+				StatusMsg:  err.Error(),
+			},
+			UserId: 0,
+			Token:  "",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, model.UserLoginResponse{
+		Response: model.Response{StatusCode: 0},
+	})
+
 }
