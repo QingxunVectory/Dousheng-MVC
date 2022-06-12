@@ -126,7 +126,7 @@ func Callbacks(c *gin.Context) {
 	fmt.Println(string(bodyByte))
 	err = service.UpdateVideoImgUrl(bodyByte)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  err.Error(),
