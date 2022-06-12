@@ -31,3 +31,11 @@ func UpdateVideoLikeCountPlus(videoId int64) error {
 func UpdateVideoLikeCountMinus(videoId int64) error {
 	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count-?", 1)).Error
 }
+
+func UpdateVideoCommentCountPlus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("comment_count", gorm.Expr("comment_count+?", 1)).Error
+}
+
+func UpdateVideoCommentCountMinus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("comment_count", gorm.Expr("comment_count-?", 1)).Error
+}
