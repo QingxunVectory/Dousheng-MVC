@@ -106,3 +106,31 @@ func UpdateVideoImgUrl(jsonStr []byte) error {
 	}
 	return nil
 }
+
+func UpdateIsFavorite(token string, videos []model.Video) ([]model.Video, error) {
+	claim, err := utils.ParseToken(token)
+	if err != nil {
+		return nil, err
+	}
+	user, err := repository.GetUserByUserName(claim.UserName)
+	if err != nil {
+		return nil, err
+	}
+	favoriteVideos, err := repository.GetFavoritesByUserId(user.Id)
+	if err != nil {
+		return nil, err
+	}
+	videoSet := make(map[int64]interface{})
+	for _, favorite := range favoriteVideos {
+		videoSet[favorite.VideoID] = true
+	}
+	retList := []model.Video{}
+	for _, video := range videos {
+		_, ok := videoSet[video.Id]
+		if ok {
+			video.IsFavorite = true
+		}
+		retList = append(retList, video)
+	}
+	return retList, nil
+}

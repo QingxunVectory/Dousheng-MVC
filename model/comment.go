@@ -6,15 +6,13 @@ import (
 )
 
 type Comment struct {
-	Id         int64    `json:"id,omitempty" gorm:"primaryKey;AUTO_INCREMENT"`
-	UserID     int64    `json:"user_id,omitempty"`
-	User       User     `json:"user"`
-	VideoID    int64    `json:"video_id"`
-	Video      Video    `json:"video"`
-	FavoriteId int64    `json:"favorite_id"`
-	Favorite   Favorite `json:"favorite"`
-	Content    string   `json:"content,omitempty"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  gorm.DeletedAt
+	Id        int64  `json:"id,omitempty" gorm:"primaryKey;AUTO_INCREMENT"`
+	UserID    int64  `json:"user_id,omitempty"`
+	User      User   `json:"user"`
+	VideoID   int64  `json:"video_id"`
+	Video     Video  `json:"video"`
+	Content   string `json:"content,omitempty"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
 }

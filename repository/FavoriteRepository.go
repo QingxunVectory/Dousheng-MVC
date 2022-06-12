@@ -12,7 +12,7 @@ func CreateFavorites(favorite *model.Favorite) (int64, error) {
 func GetFavoritesByUserId(userId int64) ([]model.Favorite, error) {
 	favorites := []model.Favorite{}
 	//"author_id"改成喜爱人的id
-	return favorites, DB.Preload("Author").Order("created_at desc").Where("author_id = ?", &userId).Find(&favorites).Error
+	return favorites, DB.Preload("User").Preload("Video").Order("created_at desc").Where("user_id = ?", &userId).Find(&favorites).Error
 }
 
 func FindFvorite(id int64, payUrl string) (favorite *model.Favorite, err error) {
@@ -40,8 +40,8 @@ func UpdateFavorite(favorite *model.Favorite, isFavorite bool, FavoriteCount int
 	return nil
 }
 
-func DeleteFavorite(favorite *model.Favorite) (err error) {
-	return DB.Delete(&favorite).Error
+func DeleteFavoriteByUserIDAndVideoID(userId int64, videoId int64) (err error) {
+	return DB.Where("user_id = ?", userId).Where("video_id =?", videoId).Delete(&model.Favorite{}).Error
 }
 
 func GetIsFavoriteByVideoId(videoId int64) (video *model.Video, err error) {
