@@ -32,7 +32,7 @@ func FindVideoIdByCommentId(id int64) (comment *model.Comment, err error) {
 	if result.RowsAffected == 0 {
 		return nil, err
 	}
-	return comment, err
+	return comment, nil
 }
 
 func GetVideoByVideoId(id int64) (video *model.Video, err error) {
