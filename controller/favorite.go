@@ -25,21 +25,22 @@ func FavoriteAction(c *gin.Context) {
 		})
 		return
 	}
-	//
-	err = service.GetIsFavoriteByVideoId(videoID, actionType, token)
-	if err != nil {
-		c.JSON(http.StatusOK, model.Response{StatusCode: -1})
+	if actionType == 1 {
+		err = service.LikeVideo(videoID, token)
+		if err != nil {
+			c.JSON(http.StatusOK, model.Response{StatusCode: -1})
+		}
+	} else if actionType == 2 {
+		err = service.DislikeVideo(videoID, token)
+		if err != nil {
+			c.JSON(http.StatusOK, model.Response{StatusCode: -1})
+		}
+	} else {
+		c.JSON(http.StatusOK, model.Response{StatusCode: -1, StatusMsg: "check your request"})
 	}
-
+	//
 	c.JSON(http.StatusOK, model.Response{StatusCode: 0})
 
-	//token := c.Query("token")
-	//
-	//if _, exist := usersLoginInfo[token]; exist {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: 0})
-	//} else {
-	//	c.JSON(http.StatusOK, model.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	//}
 }
 
 // FavoriteList all users have same favorite video list
@@ -60,8 +61,7 @@ func FavoriteList(c *gin.Context) {
 		})
 		return
 	}
-	favorites, err := service.GetFavoritesByUserId(userId)
-	fmt.Println("favorites：", favorites)
+	videoList, err := service.GetFavoritesByUserId(userId)
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{
 			StatusCode: 1,
@@ -73,7 +73,7 @@ func FavoriteList(c *gin.Context) {
 		Response: model.Response{
 			StatusCode: 0,
 		},
-		FavoriteList: favorites,
+		FavoriteList: videoList,
 	})
 
 	//c.JSON(http.StatusOK, model.VideoListResponse{

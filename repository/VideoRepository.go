@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/RaymondCode/simple-demo/model"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -17,4 +18,16 @@ func GetVideosByTime(lastTime time.Time) ([]model.Video, error) {
 func GetVideosByUserId(id int64) ([]model.Video, error) {
 	videos := []model.Video{}
 	return videos, DB.Preload("Author").Order("created_at desc").Where("author_id = ?", &id).Find(&videos).Error
+}
+
+func UpdateVideo(video *model.Video) (int64, error) {
+	return DB.RowsAffected, DB.Save(video).Error
+}
+
+func UpdateVideoLikeCountPlus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count+?", 1)).Error
+}
+
+func UpdateVideoLikeCountMinus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count-?", 1)).Error
 }

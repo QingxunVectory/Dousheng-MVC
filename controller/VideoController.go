@@ -119,11 +119,16 @@ func Feed(c *gin.Context) {
 	}
 
 	//判断token为空的话 点赞为0？？
-	if token == "" {
-		for i := 0; i < len(videos); i++ {
-			videos[i].FavoriteCount = 0
-			videos[i].IsFavorite = false
+	if token != "" {
+		favorite, err := service.UpdateIsFavorite(token, videos)
+		if err != nil {
+			c.JSON(http.StatusOK, model.FeedResponse{
+				Response:  model.Response{StatusCode: -1},
+				VideoList: nil,
+				NextTime:  time.Now().Unix(),
+			})
 		}
+		videos = favorite
 	}
 
 	c.JSON(http.StatusOK, model.FeedResponse{

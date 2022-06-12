@@ -39,7 +39,7 @@ type VideoListResponse struct {
 
 type FavoriteListResponse struct {
 	Response
-	FavoriteList []Favorite `json:"video_list"`
+	FavoriteList []Video `json:"video_list"`
 }
 
 type UserListResponse struct {
