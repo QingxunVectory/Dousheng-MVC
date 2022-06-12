@@ -14,7 +14,7 @@ func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 	if username == "" || password == "" {
-		c.JSON(http.StatusBadRequest, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  "some params is lose",
@@ -25,7 +25,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	if len(username) > 32 || len(password) > 32 {
-		c.JSON(http.StatusBadRequest, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  "check username or password len",
@@ -37,7 +37,7 @@ func Register(c *gin.Context) {
 	}
 	userId, err := service.CreateUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  err.Error(),
@@ -50,7 +50,7 @@ func Register(c *gin.Context) {
 	token, err := utils.GenToken(username, password)
 	if err != nil {
 		fmt.Println("can not generate token")
-		c.JSON(http.StatusInternalServerError, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  err.Error(),
@@ -72,7 +72,7 @@ func Login(c *gin.Context) {
 	password := c.Query("password")
 
 	if username == "" || password == "" {
-		c.JSON(http.StatusBadRequest, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  "some params is lose",
@@ -85,7 +85,7 @@ func Login(c *gin.Context) {
 
 	userId, token, err := service.ValidateUser(username, password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.UserLoginResponse{
+		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  err.Error(),
@@ -107,7 +107,7 @@ func GetUserInfo(c *gin.Context) {
 	userIdStr := c.Query("user_id")
 	token := c.Query("token")
 	if userIdStr == "" || token == "" {
-		c.JSON(http.StatusBadRequest, model.UserResponse{
+		c.JSON(http.StatusOK, model.UserResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  "some params is lose",
@@ -118,7 +118,7 @@ func GetUserInfo(c *gin.Context) {
 	}
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.UserResponse{
+		c.JSON(http.StatusOK, model.UserResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  "please check your userId",
@@ -129,7 +129,7 @@ func GetUserInfo(c *gin.Context) {
 	}
 	user, err := service.GetUserInfo(userId, token)
 	if err != nil || user == nil {
-		c.JSON(http.StatusInternalServerError, model.UserResponse{
+		c.JSON(http.StatusOK, model.UserResponse{
 			Response: model.Response{
 				StatusCode: -1,
 				StatusMsg:  err.Error(),

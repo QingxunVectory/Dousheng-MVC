@@ -55,6 +55,10 @@ func initTable() {
 	if err != nil {
 		return
 	}
+	err = DB.AutoMigrate(model.Favorite{})
+	if err != nil {
+		return
+	}
 	//第一次如果上面报错，把上面注释掉，尝试下面建表逻辑。
 	//err := DB.Migrator().CreateTable(model.User{})
 	//if err != nil {

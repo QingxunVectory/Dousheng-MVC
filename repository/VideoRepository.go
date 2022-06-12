@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -24,4 +25,24 @@ func UpdateVideosByUrl(url string, imgPath string) (int64, error) {
 	fmt.Println(url)
 	url = "%" + url + "%"
 	return DB.RowsAffected, DB.Model(&model.Video{}).Where("play_url like ?", &url).Update("cover_url", imgPath).Error
+}
+
+func UpdateVideo(video *model.Video) (int64, error) {
+	return DB.RowsAffected, DB.Save(video).Error
+}
+
+func UpdateVideoLikeCountPlus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count+?", 1)).Error
+}
+
+func UpdateVideoLikeCountMinus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count-?", 1)).Error
+}
+
+func UpdateVideoCommentCountPlus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("comment_count", gorm.Expr("comment_count+?", 1)).Error
+}
+
+func UpdateVideoCommentCountMinus(videoId int64) error {
+	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("comment_count", gorm.Expr("comment_count-?", 1)).Error
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -15,7 +16,9 @@ import (
 //后续优化相关逻辑
 //test branch
 func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
+	fmt.Println(data.Filename)
 	fileKey := utils.GenerateVideoKey(data.Filename)
+	fmt.Println("fileKey:" + fileKey)
 	open, err := data.Open()
 	if err != nil {
 		return err
@@ -32,6 +35,7 @@ func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(utils.GetVideoUrl(fileKey))
 	createdVideo := &model.Video{
 		AuthorID:      user.Id,
 		PlayUrl:       utils.GetVideoUrl(fileKey),
@@ -101,4 +105,33 @@ func UpdateVideoImgUrl(jsonStr []byte) error {
 		return err
 	}
 	return nil
+}
+
+
+func UpdateIsFavorite(token string, videos []model.Video) ([]model.Video, error) {
+	claim, err := utils.ParseToken(token)
+	if err != nil {
+		return nil, err
+	}
+	user, err := repository.GetUserByUserName(claim.UserName)
+	if err != nil {
+		return nil, err
+	}
+	favoriteVideos, err := repository.GetFavoritesByUserId(user.Id)
+	if err != nil {
+		return nil, err
+	}
+	videoSet := make(map[int64]interface{})
+	for _, favorite := range favoriteVideos {
+		videoSet[favorite.VideoID] = true
+	}
+	retList := []model.Video{}
+	for _, video := range videos {
+		_, ok := videoSet[video.Id]
+		if ok {
+			video.IsFavorite = true
+		}
+		retList = append(retList, video)
+	}
+	return retList, nil
 }
