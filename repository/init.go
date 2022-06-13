@@ -33,19 +33,23 @@ func GetDB() *gorm.DB {
 func initTable() {
 	err := DB.AutoMigrate(model.User{})
 	if err != nil {
-		return
+		panic(err)
 	}
 	err = DB.AutoMigrate(model.Video{})
 	if err != nil {
-		return
+		panic(err)
 	}
 	err = DB.AutoMigrate(model.Comment{})
 	if err != nil {
-		return
+		panic(err)
 	}
 	err = DB.AutoMigrate(model.Favorite{})
 	if err != nil {
-		return
+		panic(err)
+	}
+	err = DB.AutoMigrate(model.UserRelation{})
+	if err != nil {
+		panic(err)
 	}
 	//第一次如果上面报错，把上面注释掉，尝试下面建表逻辑。
 	//err := DB.Migrator().CreateTable(model.User{})
