@@ -52,7 +52,3 @@ func GetFavoriteByFavoriteId(id int64) (favorite *model.Favorite, err error) {
 	}
 	return favorite, err
 }
-
-//func GetUserByUserName(userName string) ( user *model.User,err error) {
-//	DB.Where("user_name = ?", userName).First(&user)
-//}

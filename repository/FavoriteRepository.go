@@ -23,12 +23,6 @@ func FindFvorite(id int64, payUrl string) (favorite *model.Favorite, err error) 
 		return nil, fmt.Errorf("check your userName,there is no user %d", id)
 	}
 	return favorite, err
-	//favorite = &model.Favorite{}
-	//result := DB.Where("author_id=?", id).First(favorite)
-	//if result.RowsAffected == 0 {
-	//	return nil, fmt.Errorf("check your userName,there is no user %d", id)
-	//}
-	//return favorite, err
 }
 
 func UpdateFavorite(favorite *model.Favorite, isFavorite bool, FavoriteCount int64) (err error) {

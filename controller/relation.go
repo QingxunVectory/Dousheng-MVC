@@ -8,13 +8,9 @@ import (
 
 // RelationAction no practical effect, just check if token is valid
 func RelationAction(c *gin.Context) {
-	token := c.Query("token")
+	//token := c.Query("token")
+	c.JSON(http.StatusOK, model.Response{StatusCode: 0})
 
-	if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, model.Response{StatusCode: 0})
-	} else {
-		c.JSON(http.StatusOK, model.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	}
 }
 
 // FollowList all users have same follow list

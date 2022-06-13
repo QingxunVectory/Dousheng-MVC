@@ -5,19 +5,6 @@ import (
 	"github.com/RaymondCode/simple-demo/model"
 )
 
-//
-//type UserRepository interface {
-//	CreateUser(user model.User) (int64, error)
-//}
-//
-//type IUserRepository struct {
-//	mysqlDB *gorm.DB
-//}
-//
-//func NewUserRepository(db *gorm.DB) UserRepository {
-//	return IUserRepository{mysqlDB: db}
-//}
-
 func CreateUser(user *model.User) (int64, error) {
 	return user.Id, DB.Create(user).Error
 }
