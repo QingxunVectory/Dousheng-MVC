@@ -107,7 +107,6 @@ func UpdateVideoImgUrl(jsonStr []byte) error {
 	return nil
 }
 
-
 func UpdateIsFavorite(token string, videos []model.Video) ([]model.Video, error) {
 	claim, err := utils.ParseToken(token)
 	if err != nil {

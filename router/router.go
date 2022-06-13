@@ -18,7 +18,6 @@ func InitRouter(r *gin.Engine) {
 
 	apiRouter.POST("/user/updateImg/", controller.Callbacks)
 
-	apiRouter.POST("/user/test111/", controller.Test)
 	apiRouter.GET("/feed/", controller.Feed)
 
 	apiRouter.Use(middelware.JWTAuth())

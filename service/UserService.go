@@ -9,14 +9,6 @@ import (
 	"time"
 )
 
-//type UserService interface {
-//	CreateUser(user model.User) (int64, error)
-//}
-//
-//type IUserService struct {
-//	UserRepository repository.UserRepository
-//}
-
 func CreateUser(username string, password string) (int64, error) {
 	pwdByte, err := utils.GeneratePassword(password)
 	if err != nil {
@@ -74,7 +66,3 @@ func GetUserInfo(userId int64, token string) (*model.User, error) {
 	}
 	return user, nil
 }
-
-//func NewUserDataService(userRepository repository.UserRepository) UserService {
-//	return IUserService{UserRepository: userRepository}
-//}

@@ -27,10 +27,6 @@ func UpdateVideosByUrl(url string, imgPath string) (int64, error) {
 	return DB.RowsAffected, DB.Model(&model.Video{}).Where("play_url like ?", &url).Update("cover_url", imgPath).Error
 }
 
-func UpdateVideo(video *model.Video) (int64, error) {
-	return DB.RowsAffected, DB.Save(video).Error
-}
-
 func UpdateVideoLikeCountPlus(videoId int64) error {
 	return DB.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count+?", 1)).Error
 }

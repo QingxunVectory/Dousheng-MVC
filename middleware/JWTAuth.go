@@ -46,15 +46,6 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
-		//if err := CheckUserInfo(claims); err != nil {
-		//	ctx.JSON(http.StatusOK, gin.H{
-		//		"code": -1,
-		//		"msg":  "用户名或密码错误",
-		//	})
-		//	ctx.Abort()
-		//	return
-		//}
-
 		// 将当前请求的claims信息保存到请求的上下文c上
 		ctx.Set("claims", claims)
 		ctx.Next() // 后续的处理函数可以用过ctx.Get("claims")来获取当前请求的用户信息
