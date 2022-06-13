@@ -65,3 +65,41 @@ func CancelSuscribe(toUserId int64, token string) error {
 	}
 	return nil
 }
+
+func GetConcernsByUserId(userId int64) ([]model.User, error){
+	ToUsers, err := repository.GetToUserIdByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	users := []model.User{}
+	for _, toUser := range ToUsers {
+		user, err := repository.GetUsersByToUserId(toUser.ToUserID)
+		if user == nil {
+			panic("user为空")
+		}
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, *user)
+	}
+	return users, nil
+}
+
+func GetFansByTouserId(toUserId int64) ([]model.User, error){
+	users, err := repository.GetUserIdByToUserId(toUserId)
+	if err != nil {
+		return nil, err
+	}
+	tousers := []model.User{}
+	for _, toUser := range users {
+		user, err := repository.GetUsersByToUserId(toUser.UserID)
+		if user == nil {
+			panic("user为空")
+		}
+		if err != nil {
+			return nil, err
+		}
+		tousers = append(tousers, *user)
+	}
+	return tousers, nil
+}
