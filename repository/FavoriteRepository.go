@@ -23,7 +23,6 @@ func FindFvorite(id int64, payUrl string) (favorite *model.Favorite, err error) 
 		return nil, fmt.Errorf("check your userName,there is no user %d", id)
 	}
 	return favorite, err
-}
 
 func UpdateFavorite(favorite *model.Favorite, isFavorite bool, FavoriteCount int64) (err error) {
 	update := DB.Model(favorite).Updates(map[string]interface{}{"is_favorite": isFavorite, "favorite_count": FavoriteCount})

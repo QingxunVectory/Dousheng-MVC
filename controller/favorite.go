@@ -75,5 +75,4 @@ func FavoriteList(c *gin.Context) {
 		},
 		FavoriteList: videoList,
 	})
-
 }
