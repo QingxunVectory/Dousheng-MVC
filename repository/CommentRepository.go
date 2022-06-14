@@ -51,4 +51,8 @@ func GetFavoriteByFavoriteId(id int64) (favorite *model.Favorite, err error) {
 		return nil, err
 	}
 	return favorite, err
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master

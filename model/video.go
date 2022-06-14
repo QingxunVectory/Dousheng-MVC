@@ -14,7 +14,7 @@ type Video struct {
 	FavoriteCount int64  `json:"favorite_count,omitempty"`
 	CommentCount  int64  `json:"comment_count,omitempty"`
 	VideoName     string `json:"video_name"`
-	IsFavorite    bool   `json:"is_favorite,omitempty"`
+	IsFavorite    bool   `json:"is_favorite,omitempty" gorm:"-"`
 	Title         string `json:"title"`
 	CommentList   []Comment
 	CreatedAt     time.Time
