@@ -11,6 +11,7 @@ import (
 // RelationAction no practical effect, just check if token is valid
 func RelationAction(c *gin.Context) {
 	//token := c.Query("token")
+
 	token := c.Query("token")
 	to_user_id := c.Query("to_user_id")
 	//token := c.Query("token")
