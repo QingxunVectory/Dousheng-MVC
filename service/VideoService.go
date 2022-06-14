@@ -133,8 +133,4 @@ func UpdateIsFavorite(token string, videos []model.Video) ([]model.Video, error)
 		retList = append(retList, video)
 	}
 	return retList, nil
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> master
