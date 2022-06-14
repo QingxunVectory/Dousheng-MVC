@@ -15,7 +15,7 @@ func DeleteFavoriteByUserIDAndFollowerId(userId int64, followerID int64) (err er
 
 func GetToUserIdByUserId(userId int64) ([]model.UserRelation, error) {
 	ToUsers := []model.UserRelation{}
-	return ToUsers, DB.Preload("User").Preload("User").Order("created_at desc").Where("user_id = ?", &userId).Find(&ToUsers).Error
+	return ToUsers, DB.Preload("User").Preload("ToUser").Order("created_at desc").Where("user_id = ?", &userId).Find(&ToUsers).Error
 }
 
 func GetUsersByToUserId(toUserId int64) (user *model.User, err error) {
@@ -29,5 +29,5 @@ func GetUsersByToUserId(toUserId int64) (user *model.User, err error) {
 
 func GetUserIdByToUserId(toUserId int64) ([]model.UserRelation, error) {
 	ToUsers := []model.UserRelation{}
-	return ToUsers, DB.Preload("User").Preload("User").Order("created_at desc").Where("to_user_id = ?", &toUserId).Find(&ToUsers).Error
+	return ToUsers, DB.Preload("User").Preload("ToUser").Order("created_at desc").Where("to_user_id = ?", &toUserId).Find(&ToUsers).Error
 }

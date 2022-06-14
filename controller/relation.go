@@ -35,12 +35,12 @@ func RelationAction(c *gin.Context) {
 	if actionType == 1 {
 		err = service.Suscribe(toUserId, token)
 		if err != nil {
-			c.JSON(http.StatusOK, model.Response{StatusCode: -1})
+			c.JSON(http.StatusOK, model.Response{StatusCode: -1, StatusMsg: err.Error()})
 		}
 	} else if actionType == 2 {
 		err = service.CancelSuscribe(toUserId, token)
 		if err != nil {
-			c.JSON(http.StatusOK, model.Response{StatusCode: -1})
+			c.JSON(http.StatusOK, model.Response{StatusCode: -1, StatusMsg: err.Error()})
 		}
 	} else {
 		c.JSON(http.StatusOK, model.Response{StatusCode: -1, StatusMsg: "check your request"})
