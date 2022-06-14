@@ -27,7 +27,11 @@ func FindFvorite(id int64, payUrl string) (favorite *model.Favorite, err error) 
 
 func UpdateFavorite(favorite *model.Favorite, isFavorite bool, FavoriteCount int64) (err error) {
 	update := DB.Model(favorite).Updates(map[string]interface{}{"is_favorite": isFavorite, "favorite_count": FavoriteCount})
+<<<<<<< HEAD
 	//update := DB.Model(video).Update("is_favorite", isFavorite)
+=======
+	
+>>>>>>> master
 	if update.RowsAffected == 0 {
 		return err
 	}
