@@ -110,7 +110,7 @@ func Feed(c *gin.Context) {
 		}
 		queryTime = ctime
 	}
-	videos, times, err := service.GetVideos(queryTime)
+	videos, times, err := service.GetVideos(queryTime, token)
 	if err != nil {
 		c.JSON(http.StatusOK, model.FeedResponse{
 			Response:  model.Response{StatusCode: -1},

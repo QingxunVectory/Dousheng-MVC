@@ -53,7 +53,7 @@ func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 	return nil
 }
 
-func GetVideos(queryTime time.Time) ([]model.Video, int64, error) {
+func GetVideos(queryTime time.Time, token string) ([]model.Video, int64, error) {
 	videos, err := repository.GetVideosByTime(queryTime)
 	if err != nil {
 		return nil, -1, err
@@ -61,6 +61,36 @@ func GetVideos(queryTime time.Time) ([]model.Video, int64, error) {
 	if len(videos) == 0 {
 		return videos, time.Now().UnixMilli(), nil
 	}
+	//返回是否已经关注
+	if token != "" {
+		parsedVideos := []model.Video{}
+		followSet := make(map[int64]interface{})
+		parseToken, err := utils.ParseToken(token)
+		if err != nil {
+			return nil, 0, err
+		}
+		userName := parseToken.UserName
+		user, err := repository.GetUserByUserName(userName)
+		if err != nil {
+			return nil, 0, err
+		}
+		relations, err := repository.GetToUserIdByUserId(user.Id)
+		if err != nil {
+			return nil, 0, err
+		}
+		for _, relation := range relations {
+			followSet[relation.ToUserID] = true
+		}
+		for _, video := range videos {
+			_, ok := followSet[video.AuthorID]
+			if ok {
+				video.Author.IsFollow = true
+			}
+			parsedVideos = append(parsedVideos, video)
+		}
+		videos = parsedVideos
+	}
+
 	lastVideo := videos[len(videos)-1]
 	return videos, lastVideo.CreatedAt.Unix(), nil
 }
