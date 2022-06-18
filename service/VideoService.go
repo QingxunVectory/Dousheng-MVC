@@ -2,12 +2,12 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository"
 	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/bitly/go-simplejson"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"mime/multipart"
 	"net/url"
 	"time"
@@ -16,11 +16,10 @@ import (
 //后续优化相关逻辑
 //test branch
 func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
-	fmt.Println(data.Filename)
 	fileKey := utils.GenerateVideoKey(data.Filename)
-	fmt.Println("fileKey:" + fileKey)
 	open, err := data.Open()
 	if err != nil {
+		logrus.Errorf("[UploadVideo] UploadVideo failed ,the error is %s", err)
 		return err
 	}
 	err = utils.Upload(fileKey, open)
@@ -35,7 +34,6 @@ func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(utils.GetVideoUrl(fileKey))
 	createdVideo := &model.Video{
 		AuthorID:      user.Id,
 		PlayUrl:       utils.GetVideoUrl(fileKey),
@@ -48,6 +46,7 @@ func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 	}
 	_, err = repository.CreateVideo(createdVideo)
 	if err != nil {
+		logrus.Errorf("[UploadVideo] CreateVideo failed ,the error is %s", err)
 		return err
 	}
 	return nil
@@ -56,6 +55,7 @@ func UploadVideo(ctx *gin.Context, data *multipart.FileHeader) error {
 func GetVideos(queryTime time.Time, token string) ([]model.Video, int64, error) {
 	videos, err := repository.GetVideosByTime(queryTime)
 	if err != nil {
+		logrus.Errorf("[GetVideos] GetVideosByTime failed ,the error is %s", err)
 		return nil, -1, err
 	}
 	if len(videos) == 0 {
@@ -67,15 +67,18 @@ func GetVideos(queryTime time.Time, token string) ([]model.Video, int64, error) 
 		followSet := make(map[int64]interface{})
 		parseToken, err := utils.ParseToken(token)
 		if err != nil {
+			logrus.Errorf("[GetVideos] ParseToken failed ,the error is %s", err)
 			return nil, 0, err
 		}
 		userName := parseToken.UserName
 		user, err := repository.GetUserByUserName(userName)
 		if err != nil {
+			logrus.Errorf("[GetVideos] GetUserByUserName failed ,the error is %s", err)
 			return nil, 0, err
 		}
 		relations, err := repository.GetToUserIdByUserId(user.Id)
 		if err != nil {
+			logrus.Errorf("[GetVideos] GetToUserIdByUserId failed ,the error is %s", err)
 			return nil, 0, err
 		}
 		for _, relation := range relations {
@@ -132,6 +135,7 @@ func UpdateVideoImgUrl(jsonStr []byte) error {
 	nameStrs := nameStr[1:]
 	_, err = repository.UpdateVideosByUrl(nameStrs, imgPath)
 	if err != nil {
+		logrus.Errorf("[UpdateVideoImgUrl] UpdateVideosByUrl failed ,the error is %s", err)
 		return err
 	}
 	return nil
@@ -140,14 +144,17 @@ func UpdateVideoImgUrl(jsonStr []byte) error {
 func UpdateIsFavorite(token string, videos []model.Video) ([]model.Video, error) {
 	claim, err := utils.ParseToken(token)
 	if err != nil {
+		logrus.Errorf("[UpdateIsFavorite] ParseToken failed ,the error is %s", err)
 		return nil, err
 	}
 	user, err := repository.GetUserByUserName(claim.UserName)
 	if err != nil {
+		logrus.Errorf("[UpdateIsFavorite] GetUserByUserName failed ,the error is %s", err)
 		return nil, err
 	}
 	favoriteVideos, err := repository.GetFavoritesByUserId(user.Id)
 	if err != nil {
+		logrus.Errorf("[UpdateIsFavorite] GetFavoritesByUserId failed ,the error is %s", err)
 		return nil, err
 	}
 	videoSet := make(map[int64]interface{})

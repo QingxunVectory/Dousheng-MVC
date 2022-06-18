@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -49,7 +48,6 @@ func Register(c *gin.Context) {
 	}
 	token, err := utils.GenToken(username, password)
 	if err != nil {
-		fmt.Println("can not generate token")
 		c.JSON(http.StatusOK, model.UserLoginResponse{
 			Response: model.Response{
 				StatusCode: -1,

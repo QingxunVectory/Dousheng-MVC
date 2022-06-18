@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"gorm.io/gorm/logger"
 	"strings"
 	"sync"
 
@@ -33,7 +34,9 @@ func GetDB() *gorm.DB {
 		//mysqlDsn := "root:zz19980722@tcp(49.232.87.168:3306)/dousheng?charset=utf8mb4&parseTime=True&loc=Local"
 		mysqlDsn := strings.Join([]string{dbUserName, ":", dbPasswd, "@tcp(", dbIPAddr, ":", dbPort, ")/", dbName, "?charset=utf8mb4&parseTime=True&loc=Local"}, "")
 
-		db, err := gorm.Open(mysql.Open(mysqlDsn))
+		db, err := gorm.Open(mysql.Open(mysqlDsn), &gorm.Config{ //建立连接时指定打印info级别的sql
+			Logger: logger.Default.LogMode(logger.Info), //配置日志级别，打印出所有的sql
+		})
 		DB = db
 		if err != nil {
 			panic("mysql init err")

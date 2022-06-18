@@ -5,17 +5,20 @@ import (
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository"
 	"github.com/RaymondCode/simple-demo/utils"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
 func Suscribe(toUserId int64, token string) error {
 	parseToken, err := utils.ParseToken(token)
 	if err != nil {
+		logrus.Errorf("[Suscribe] ParseToken failed ,the error is %s", err)
 		return err
 	}
 	userName := parseToken.UserName
 	user, err := repository.GetUserByUserName(userName)
 	if err != nil {
+		logrus.Errorf("[Suscribe] GetUserByUserName failed ,the error is %s", err)
 		return err
 	}
 	if user.Id == toUserId {
@@ -30,14 +33,17 @@ func Suscribe(toUserId int64, token string) error {
 	}
 	_, err = repository.CreateRelation(createdRelation)
 	if err != nil {
+		logrus.Errorf("[Suscribe] CreateRelation failed ,the error is %s", err)
 		return err
 	}
 	err = repository.UpdateFollowerCountPlus(toUserId)
 	if err != nil {
+		logrus.Errorf("[Suscribe] CreateRelation failed ,the error is %s", err)
 		return err
 	}
 	err = repository.UpdateFollowCountPlus(userId)
 	if err != nil {
+		logrus.Errorf("[Suscribe] UpdateFollowCountPlus failed ,the error is %s", err)
 		return err
 	}
 	return nil
@@ -46,11 +52,13 @@ func Suscribe(toUserId int64, token string) error {
 func CancelSuscribe(toUserId int64, token string) error {
 	parseToken, err := utils.ParseToken(token)
 	if err != nil {
+		logrus.Errorf("[CancelSuscribe] ParseToken failed ,the error is %s", err)
 		return err
 	}
 	userName := parseToken.UserName
 	user, err := repository.GetUserByUserName(userName)
 	if err != nil {
+		logrus.Errorf("[CancelSuscribe] GetUserByUserName failed ,the error is %s", err)
 		return err
 	}
 	userId := user.Id
@@ -59,14 +67,17 @@ func CancelSuscribe(toUserId int64, token string) error {
 	}
 	err = repository.DeleteFavoriteByUserIDAndFollowerId(user.Id, toUserId)
 	if err != nil {
+		logrus.Errorf("[CancelSuscribe] DeleteFavoriteByUserIDAndFollowerId failed ,the error is %s", err)
 		return err
 	}
 	err = repository.UpdateFollowerCountMinus(toUserId)
 	if err != nil {
+		logrus.Errorf("[CancelSuscribe] UpdateFollowerCountMinus failed ,the error is %s", err)
 		return err
 	}
 	err = repository.UpdateFollowCountMinus(userId)
 	if err != nil {
+		logrus.Errorf("[UpdateFollowCountMinus] UpdateFollowCountMinus failed ,the error is %s", err)
 		return err
 	}
 	return nil
@@ -75,6 +86,7 @@ func CancelSuscribe(toUserId int64, token string) error {
 func GetConcernsByUserId(userId int64) ([]model.User, error) {
 	ToUsers, err := repository.GetToUserIdByUserId(userId)
 	if err != nil {
+		logrus.Errorf("[GetToUserIdByUserId] GetToUserIdByUserId failed ,the error is %s", err)
 		return nil, err
 	}
 	users := []model.User{}
@@ -89,11 +101,13 @@ func GetConcernsByUserId(userId int64) ([]model.User, error) {
 func GetFansByTouserId(toUserId int64) ([]model.User, error) {
 	users, err := repository.GetUserIdByToUserId(toUserId)
 	if err != nil {
+		logrus.Errorf("[GetFansByTouserId] GetToUserIdByUserId failed ,the error is %s", err)
 		return nil, err
 	}
 	//check 当前用户是否同时关注粉丝
 	followers, err := repository.GetToUserIdByUserId(toUserId)
 	if err != nil {
+		logrus.Errorf("[GetFansByTouserId] GetToUserIdByUserId failed ,the error is %s", err)
 		return nil, err
 	}
 	fansSet := make(map[int64]interface{})

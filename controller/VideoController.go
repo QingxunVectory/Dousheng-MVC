@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/RaymondCode/simple-demo/utils"
@@ -74,7 +73,6 @@ func PublishList(c *gin.Context) {
 		return
 	}
 	videos, err := service.GetVideosByUserId(userId)
-	fmt.Println("videos：", videos)
 	if err != nil {
 		c.JSON(http.StatusOK, model.Response{
 			StatusCode: 1,
@@ -144,7 +142,6 @@ func Callbacks(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	fmt.Println(string(bodyByte))
 	err = service.UpdateVideoImgUrl(bodyByte)
 	if err != nil {
 		c.JSON(http.StatusOK, model.UserLoginResponse{

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,6 @@ func FavoriteAction(c *gin.Context) {
 	video_id := c.Query("video_id")
 	//token := c.Query("token")
 	action_type := c.Query("action_type")
-	fmt.Println("action_type")
 	videoID, err := strconv.ParseInt(video_id, 10, 64)
 	actionType, err := strconv.ParseInt(action_type, 10, 64)
 	if err != nil {
