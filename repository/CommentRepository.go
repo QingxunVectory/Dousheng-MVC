@@ -2,6 +2,8 @@ package repository
 
 import (
 	"github.com/RaymondCode/simple-demo/model"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -13,12 +15,38 @@ func UpdateCommentCountOfFavorites(favorite *model.Favorite) (err error) {
 	return DB.Save(favorite).Error
 }
 
-func CreateComment(comment *model.Comment) (*model.Comment, error) {
-	return comment, DB.Create(comment).Error
+func CreateComment(comment *model.Comment, videoId int64) (*model.Comment, error) {
+	tx := DB.Begin()
+	defer tx.Callback()
+	if err := tx.Create(comment).Error; err != nil {
+		logrus.Errorf("[CreateComment] CreateComment failed error is %s", err)
+		tx.Callback()
+		return nil, err
+	}
+	if err := tx.Model(model.Video{}).Where("id = ?", videoId).Update("comment_count", gorm.Expr("comment_count+?", 1)).Error; err != nil {
+		logrus.Errorf("[CreateComment] UpdateCount  error is %s", err)
+		tx.Callback()
+		return nil, err
+	}
+	tx.Commit()
+	return comment, nil
 }
 
-func DeleteCommentByCommentId(id int64) (err error) {
-	return DB.Where("id = ?", id).Delete(&model.Comment{}).Error
+func DeleteCommentByCommentId(id int64, videoId int64) (err error) {
+	tx := DB.Begin()
+	defer tx.Callback()
+	if err := tx.Where("id = ?", id).Delete(&model.Comment{}).Error; err != nil {
+		logrus.Errorf("[DeleteCommentByCommentId] DeleteComment failed error is %s", err)
+		tx.Callback()
+		return err
+	}
+	if err := DB.Model(model.Video{}).Where("id = ?", videoId).Update("comment_count", gorm.Expr("comment_count-?", 1)).Error; err != nil {
+		logrus.Errorf("[DeleteCommentByCommentId] UpdateComment failed error is %s", err)
+		tx.Callback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
 
 func GetCommentByVideoId(id int64) ([]model.Comment, error) {

@@ -31,19 +31,9 @@ func Suscribe(toUserId int64, token string) error {
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},
 	}
-	_, err = repository.CreateRelation(createdRelation)
+	_, err = repository.CreateRelation(createdRelation, toUserId, userId)
 	if err != nil {
 		logrus.Errorf("[Suscribe] CreateRelation failed ,the error is %s", err)
-		return err
-	}
-	err = repository.UpdateFollowerCountPlus(toUserId)
-	if err != nil {
-		logrus.Errorf("[Suscribe] CreateRelation failed ,the error is %s", err)
-		return err
-	}
-	err = repository.UpdateFollowCountPlus(userId)
-	if err != nil {
-		logrus.Errorf("[Suscribe] UpdateFollowCountPlus failed ,the error is %s", err)
 		return err
 	}
 	return nil
@@ -61,23 +51,12 @@ func CancelSuscribe(toUserId int64, token string) error {
 		logrus.Errorf("[CancelSuscribe] GetUserByUserName failed ,the error is %s", err)
 		return err
 	}
-	userId := user.Id
 	if user.Id == toUserId {
 		return errors.New("can not cancelSuscribe yourself")
 	}
 	err = repository.DeleteFavoriteByUserIDAndFollowerId(user.Id, toUserId)
 	if err != nil {
 		logrus.Errorf("[CancelSuscribe] DeleteFavoriteByUserIDAndFollowerId failed ,the error is %s", err)
-		return err
-	}
-	err = repository.UpdateFollowerCountMinus(toUserId)
-	if err != nil {
-		logrus.Errorf("[CancelSuscribe] UpdateFollowerCountMinus failed ,the error is %s", err)
-		return err
-	}
-	err = repository.UpdateFollowCountMinus(userId)
-	if err != nil {
-		logrus.Errorf("[UpdateFollowCountMinus] UpdateFollowCountMinus failed ,the error is %s", err)
 		return err
 	}
 	return nil

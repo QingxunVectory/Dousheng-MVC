@@ -27,14 +27,9 @@ func LikeVideo(videoId int64, token string) error {
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},
 	}
-	_, err = repository.CreateFavorites(createdFavorite)
+	_, err = repository.CreateFavorites(createdFavorite, videoId)
 	if err != nil {
 		logrus.Errorf("[LikeVideo] CreateFavorites failed ,the error is %s", err)
-		return err
-	}
-	err = repository.UpdateVideoLikeCountPlus(videoId)
-	if err != nil {
-		logrus.Errorf("[LikeVideo] UpdateVideoLikeCountPlus failed ,the error is %s", err)
 		return err
 	}
 	return nil
@@ -55,11 +50,6 @@ func DislikeVideo(videoId int64, token string) error {
 	err = repository.DeleteFavoriteByUserIDAndVideoID(user.Id, videoId)
 	if err != nil {
 		logrus.Errorf("[DislikeVideo] DeleteFavoriteByUserIDAndVideoID failed ,the error is %s", err)
-		return err
-	}
-	err = repository.UpdateVideoLikeCountMinus(videoId)
-	if err != nil {
-		logrus.Errorf("[DislikeVideo] UpdateVideoLikeCountMinus failed ,the error is %s", err)
 		return err
 	}
 	return nil

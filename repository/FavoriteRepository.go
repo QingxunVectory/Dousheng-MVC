@@ -3,10 +3,25 @@ package repository
 import (
 	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
-func CreateFavorites(favorite *model.Favorite) (int64, error) {
-	return favorite.Id, DB.Create(favorite).Error
+func CreateFavorites(favorite *model.Favorite, videoId int64) (int64, error) {
+	tx := DB.Begin()
+	defer tx.Callback()
+	if err := tx.Create(favorite).Error; err != nil {
+		logrus.Errorf("[CreateFavorites] CreateFavorites failed error is %s", err)
+		tx.Callback()
+		return -1, err
+	}
+	if err := tx.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count+?", 1)).Error; err != nil {
+		logrus.Errorf("[CreateFavorites] CreateFavorites failed error is %s", err)
+		tx.Callback()
+		return -1, err
+	}
+	tx.Commit()
+	return favorite.Id, nil
 }
 
 func GetFavoritesByUserId(userId int64) ([]model.Favorite, error) {
@@ -27,7 +42,7 @@ func FindFvorite(id int64, payUrl string) (favorite *model.Favorite, err error) 
 
 func UpdateFavorite(favorite *model.Favorite, isFavorite bool, FavoriteCount int64) (err error) {
 	update := DB.Model(favorite).Updates(map[string]interface{}{"is_favorite": isFavorite, "favorite_count": FavoriteCount})
-  
+
 	if update.RowsAffected == 0 {
 		return err
 	}
@@ -35,7 +50,20 @@ func UpdateFavorite(favorite *model.Favorite, isFavorite bool, FavoriteCount int
 }
 
 func DeleteFavoriteByUserIDAndVideoID(userId int64, videoId int64) (err error) {
-	return DB.Where("user_id = ?", userId).Where("video_id =?", videoId).Delete(&model.Favorite{}).Error
+	tx := DB.Begin()
+	defer tx.Callback()
+	if err := tx.Where("user_id = ?", userId).Where("video_id =?", videoId).Delete(&model.Favorite{}).Error; err != nil {
+		logrus.Errorf("[DeleteFavoriteByUserIDAndVideoID] CreateFavorites failed error is %s", err)
+		tx.Callback()
+		return err
+	}
+	if err := tx.Model(model.Video{}).Where("id = ?", videoId).Update("favorite_count", gorm.Expr("favorite_count-?", 1)).Error; err != nil {
+		logrus.Errorf("[DeleteFavoriteByUserIDAndVideoID] CreateFavorites failed error is %s", err)
+		tx.Callback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
 
 func GetIsFavoriteByVideoId(videoId int64) (video *model.Video, err error) {

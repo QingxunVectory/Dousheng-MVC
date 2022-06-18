@@ -64,7 +64,7 @@ func GetUserInfo(userId int64, token string) (*model.User, error) {
 	userName := claims.UserName
 	user, err := repository.GetUserByUserName(userName)
 	if err != nil {
-		logrus.Errorf("[ValidateUser] GetUserInfo failed ,the error is %s", err)
+		logrus.Errorf("[ValidateUser] GetUser failed ,the error is %s", err)
 		return nil, err
 	}
 	if user.Id != userId {

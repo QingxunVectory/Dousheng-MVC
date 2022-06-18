@@ -31,14 +31,9 @@ func AddComment(token string, videoId int64, comment_text string) (comment *mode
 		UpdatedAt: time.Time{},
 		DeletedAt: gorm.DeletedAt{},
 	}
-	comment, err = repository.CreateComment(createdComment)
+	comment, err = repository.CreateComment(createdComment, videoId)
 	if err != nil {
 		logrus.Errorf("[AddComment] GetUserByUserName failed ,the error is %s", err)
-		return nil, err
-	}
-	err = repository.UpdateVideoCommentCountPlus(videoId)
-	if err != nil {
-		logrus.Errorf("[AddComment] UpdateVideoCommentCountPlus failed ,the error is %s", err)
 		return nil, err
 	}
 	comment.User = *user
@@ -55,17 +50,11 @@ func DeleteCommentByCommentId(id int64) (err error) {
 		return err
 	}
 
-	err = repository.DeleteCommentByCommentId(id)
+	err = repository.DeleteCommentByCommentId(id, comment.VideoID)
 	if err != nil {
 		logrus.Errorf("[DeleteCommentByCommentId] DeleteCommentByCommentId failed ,the error is %s", err)
 		return err
 	}
-	err = repository.UpdateVideoCommentCountMinus(comment.VideoID)
-	if err != nil {
-		logrus.Errorf("[DeleteCommentByCommentId] UpdateVideoCommentCountMinus failed ,the error is %s", err)
-		return err
-	}
-
 	return nil
 }
 
