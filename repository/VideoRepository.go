@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"github.com/RaymondCode/simple-demo/model"
 	"gorm.io/gorm"
 	"time"
@@ -22,7 +21,6 @@ func GetVideosByUserId(id int64) ([]model.Video, error) {
 }
 
 func UpdateVideosByUrl(url string, imgPath string) (int64, error) {
-	fmt.Println(url)
 	url = "%" + url + "%"
 	return DB.RowsAffected, DB.Model(&model.Video{}).Where("play_url like ?", &url).Update("cover_url", imgPath).Error
 }

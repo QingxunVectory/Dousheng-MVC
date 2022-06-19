@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -36,7 +37,7 @@ func ParseToken(tokenStr string) (*CustomClaims, error) {
 		return MySecret, nil
 	})
 	if err != nil {
-		fmt.Println(" token parse err:", err)
+		logrus.Errorf("[ParseToken] ParseToken failed ,the error is %s", err)
 		return nil, err
 	}
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
@@ -68,6 +69,7 @@ func RefreshToken(tokenStr string) (string, error) {
 func GetClaimInfoByCtx(c *gin.Context) (*CustomClaims, error) {
 	claims, ok := c.Get("claims")
 	if !ok {
+		logrus.Errorf("[ParseToken] ParseToken failed ,the error is could not get claims")
 		return nil, fmt.Errorf("could not get claims")
 	}
 	return claims.(*CustomClaims), nil

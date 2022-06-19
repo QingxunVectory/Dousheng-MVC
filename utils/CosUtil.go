@@ -2,7 +2,7 @@ package utils
 
 import (
 	"context"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"mime/multipart"
 	"net/http"
@@ -52,7 +52,7 @@ func Upload(key string, file multipart.File) error {
 
 	_, err := c.Object.Put(context.Background(), key, file, nil)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Errorf("[Upload] CosUpload failed ,the error is %s", err)
 		return err
 	}
 	return nil
