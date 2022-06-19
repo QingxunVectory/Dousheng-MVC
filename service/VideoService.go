@@ -68,17 +68,20 @@ func GetVideos(queryTime time.Time, token string) ([]model.Video, int64, error) 
 		parseToken, err := utils.ParseToken(token)
 		if err != nil {
 			logrus.Errorf("[GetVideos] ParseToken failed ,the error is %s", err)
+      
 			return nil, 0, err
 		}
 		userName := parseToken.UserName
 		user, err := repository.GetUserByUserName(userName)
 		if err != nil {
 			logrus.Errorf("[GetVideos] GetUserByUserName failed ,the error is %s", err)
+
 			return nil, 0, err
 		}
 		relations, err := repository.GetToUserIdByUserId(user.Id)
 		if err != nil {
 			logrus.Errorf("[GetVideos] GetToUserIdByUserId failed ,the error is %s", err)
+
 			return nil, 0, err
 		}
 		for _, relation := range relations {
